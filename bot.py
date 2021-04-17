@@ -16,15 +16,15 @@ else:
     with open(os.getcwd() + "/config.json", "w+") as f:
         json.dump(configTemplate, f)
 
-driver_path = Path("C:\chromedriver\driver\chromedriver.exe")
-userDataDir = Path(r"C:\chromedriver\driver\User Data")
+driver_path = Path("/chromedriver.exe")
+userDataDir = Path(r"/chromedriver/User Data")
 
 #delay = configData["Delay"]
 nameList = configData["Usernames"]
 
 options = webdriver.ChromeOptions()
 options.add_argument('--disable-blink-features=AutomationControlled')
-options.add_argument("--user-data-dir={}".format(userDataDir))
+#options.add_argument("--user-data-dir={}".format(userDataDir))
 
 driver = webdriver.Chrome(driver_path, chrome_options=options)
 
