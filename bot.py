@@ -22,11 +22,11 @@ userDataDir = Path(r"/chromedriver/User Data")
 # delay = configData["Delay"]
 nameList = configData["Usernames"]
 
-#options = webdriver.ChromeOptions()
-#options.add_argument('--disable-blink-features=AutomationControlled')
+options = webdriver.ChromeOptions()
+options.add_argument('--disable-blink-features=AutomationControlled')
 #options.add_argument("--user-data-dir={}".format(userDataDir))
 
-driver = webdriver.Chrome(executable_path=os.path.dirname(os.path.abspath(__file__)) + "/chromedriver.exe")
+driver = webdriver.Chrome(executable_path=os.path.dirname(os.path.abspath(__file__)) + "/chromedriver.exe", chrome_options=options)
 
 game_number = 0
 
