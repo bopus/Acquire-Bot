@@ -1,72 +1,60 @@
-from selenium import webdriver
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver import ActionChains
-import time
 import json
 import os
-import re
+import time
 
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 
 if os.path.exists(os.getcwd() + "/config.json"):
     with open("./config.json") as f:
         configData = json.load(f)
 else:
-    configTemplate = {"Usernames": "", "Windows Username": ""}
+    configTemplate = {"Usernames": ""}
 
     with open(os.getcwd() + "/config.json", "w+") as f:
         json.dump(configTemplate, f)
 
+PATH = "C:\\chromedriver.exe"
 
-
-PATH = "C:\chromedriver.exe"
-
-
-delay = configData["Delay"]
+#delay = configData["Delay"]
 nameList = configData["Usernames"]
-windowsUsername = configData["Windows Username"]
 
 options = webdriver.ChromeOptions()
 options.add_argument('--disable-blink-features=AutomationControlled')
 
 driver = webdriver.Chrome(PATH, chrome_options=options)
 
-gameNumber = 0
+game_number = 0
 
 
-
-def newUser(username, number, gameNumber):
+def new_user(username_input, nth_user, game_number_input):
     driver.get("https://acquire.tlstyer.com/")
-    logIn(username)
+    login(username_input)
     time.sleep(1)
-    if number % 3 == 0 or gameNumber == 0:
-        return createGame()
+    if nth_user % 3 == 0 or game_number_input == 0:
+        return create_game()
     else:
-        watchGame(gameNumber)
-        return gameNumber
+        watch_game(game_number_input)
+        return game_number_input
 
-def watchGame(gameNumber):
-    driver.find_element_by_xpath(".//div[@id='lobby-game-{}']//input[@value='Watch']".format(gameNumber)).click()
 
-def logIn(username):
-    loggedIn = False
-    while not loggedIn:
-        driver.find_element_by_id("login-form-username").clear()
-        driver.find_element_by_id("login-form-username").send_keys(username)
-        print("typed in a username")
-        driver.find_element_by_xpath("//input[@value='Login']").click()
-        loggedIn = True
-        
-def createGame():
-    createdGame = False
-    while not createdGame:
-        Select(driver.find_element_by_id('cg-max-players')).select_by_value("1")
-        driver.find_element_by_id("button-create-game").click()
-        time.sleep(0.5)
-        
-        for elem in driver.find_elements_by_xpath('.//span[@class = "header"]'):
-            return int(elem.text.replace(":", "").replace("Game #", ""))
-            createdGame = True
+def watch_game(game_number_input):
+    driver.find_element_by_xpath(".//div[@id='lobby-game-{}']//input[@value='Watch']".format(game_number_input)).click()
+
+
+def login(username_input):
+    driver.find_element_by_id("login-form-username").clear()
+    driver.find_element_by_id("login-form-username").send_keys(username_input)
+    print("typed in a username")
+    driver.find_element_by_xpath("//input[@value='Login']").click()
+
+
+def create_game():
+    Select(driver.find_element_by_id('cg-max-players')).select_by_value("1")
+    driver.find_element_by_id("button-create-game").click()
+    time.sleep(0.5)
+    for elem in driver.find_elements_by_xpath('.//span[@class = "header"]'):
+        return int(elem.text.replace(":", "").replace("Game #", ""))
 
 
 usernames = nameList.split(",")
@@ -74,10 +62,9 @@ usernames = nameList.split(",")
 count = 0
 for username in usernames:
     username.strip()
-    gameNumber = newUser(username, count, gameNumber)
-    print(gameNumber)
+    game_number = new_user(username, count, game_number)
+    print(game_number)
     driver.execute_script("window.open('https://acquire.tlstyer.com/');")
     driver.switch_to.window(driver.window_handles[-1])
     count += 1
 driver.execute_script("window.close();")
-    
